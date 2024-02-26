@@ -2,34 +2,61 @@ import ErrorAlert from "@/components/Alerts/ErrorAlert";
 import SuccessAlert from "@/components/Alerts/SuccessAlert";
 import Spinner from "@/components/Loaders/Spinner";
 import ModalLayout from "@/components/Modals/Layout";
+import SimpleNotification from "@/components/Notifications/Simple";
 import Selectbox from "@/components/Selectbox";
 import ToggleButton from "@/components/Switch";
+import { getAllCategories } from "@/features/categories/categoriesSlice";
+import { fetchAllCategories } from "@/features/categories/categoryApi";
 import useOffer from "@/features/offers/useOffer";
+import { fetchAllPartners } from "@/features/partners/partnerApi";
+import { getAllPartners } from "@/features/partners/partnersSlice";
 import AppLayout from "@/layouts/AppLayout";
 import { PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
-const categories = [
-  { value: "fashion", label: "Fashion" },
-  { value: "restaurant", label: "Restaurants" },
-  { value: "food", label: "Food" },
-];
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const durations = [
-  { value: "1-month", label: "1 Month" },
-  { value: "3-months", label: "3 Months" },
-  { value: "6-months", label: "6 Months" },
-  { value: "1-year", label: "1 Year" },
+  { value: "1 Month", label: "1 Month" },
+  { value: "3 Months", label: "3 Months" },
+  { value: "6 Months", label: "6 Months" },
+  { value: "1 Year", label: "1 Year" },
 ];
 
 export default function OfferDetails() {
   const [edit, setEdit] = useState(false);
+
   const [showApproveModal, setShowApproveModal] = useState(false);
-  const { getOffer, reset, isLoading, error, offer } = useOffer();
+  const {
+    getOffer,
+    editOffer,
+    reset,
+    offer,
+    isLoading,
+    error,
+    successMessage,
+  } = useOffer();
+  const categories = useSelector(getAllCategories);
+  const partners = useSelector(getAllPartners);
+  const dispatch = useDispatch();
   const router = useRouter();
+
   const offerId = router?.query?.offerId;
+
+  const categoriesList = categories?.map((category) => {
+    return { value: category.title, label: category.title };
+  });
+
+  const partnersList = partners?.map((partner) => {
+    return { value: partner.id, label: partner.bussinessName };
+  });
+
+  const handleEditOffer = (data) => {
+    console.log(data);
+    editOffer(offerId, data);
+  };
 
   const toggleEdit = () => {
     setEdit(!edit);
@@ -40,10 +67,17 @@ export default function OfferDetails() {
   }, []);
 
   useEffect(() => {
+    dispatch(fetchAllCategories());
+    dispatch(fetchAllPartners());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (offerId) {
       getOffer(offerId);
     }
   }, [offerId]);
+
+  console.log(error);
 
   return (
     <AppLayout>
@@ -84,6 +118,10 @@ export default function OfferDetails() {
           {offer ? (
             <Formik
               initialValues={{
+                partner: {
+                  value: offer?.partner || "",
+                  label: "",
+                },
                 title: offer.title || "",
                 discount: offer?.discount || 0,
                 categoryName: {
@@ -97,10 +135,35 @@ export default function OfferDetails() {
                 description: offer?.description || "",
                 isFeatured: offer?.isFeatured || false,
               }}
+              onSubmit={(values) => {
+                const data = {
+                  ...values,
+                  partner: values.partner.value,
+                  categoryName: values.categoryName.value,
+                  duration: values.duration.value,
+                };
+                handleEditOffer(data);
+              }}
             >
-              {({ values, errors }) => (
+              {({}) => (
                 <Form>
                   <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
+                    <div className="col-span-2">
+                      <label
+                        htmlFor="partner"
+                        className="block mb-2 text-sm font-medium"
+                      >
+                        Partner
+                      </label>
+                      <Field
+                        name="partner"
+                        id="partner"
+                        as={SelectInput}
+                        disabled={!edit}
+                        items={partnersList}
+                        className="text-field"
+                      />
+                    </div>
                     <div>
                       <label
                         htmlFor="title"
@@ -118,17 +181,17 @@ export default function OfferDetails() {
                     </div>
                     <div>
                       <label
-                        htmlFor="category"
+                        htmlFor="categoryName"
                         className="block mb-2 text-sm font-medium"
                       >
                         Offer Category
                       </label>
                       <Field
-                        name="category"
-                        id="category"
+                        name="categoryName"
+                        id="categoryName"
                         as={SelectInput}
                         disabled={!edit}
-                        items={categories}
+                        items={categoriesList}
                       />
                     </div>
                     <div>
@@ -146,7 +209,7 @@ export default function OfferDetails() {
                         className="number-field"
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <label
                         htmlFor="validity"
                         className="block mb-2 text-sm font-medium"
@@ -160,22 +223,22 @@ export default function OfferDetails() {
                         disabled={!edit}
                         className="text-field"
                       />
-                    </div>
-                    <div>
+                    </div> */}
+                    {/* <div>
                       <label
                         htmlFor="location"
                         className="block mb-2 text-sm font-medium"
                       >
                         Location
                       </label>
-                      {/* <Field
+                      <Field
                         name="location"
                         id="location"
                         type="text"
                         disabled={!edit}
                         className="text-field"
-                      /> */}
-                    </div>
+                      />
+                    </div> */}
                     <div>
                       <label
                         htmlFor="duration"
@@ -222,22 +285,27 @@ export default function OfferDetails() {
                           disabled={!edit}
                         />
                       </div>
-                      {edit && (
-                        <div className="mt-auto ml-auto text-end md:text-base text-sm font-semibold">
-                          <button
-                            type="button"
-                            onClick={toggleEdit}
-                            className="px-8 py-2  rounded-lg mr-2 text-primary hover:bg-gray-100"
-                          >
-                            Cancel
-                          </button>
-                          <button className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light">
-                            Save
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
+                  {edit && (
+                    <div className="my-4 text-end md:text-base text-sm font-semibold">
+                      <button
+                        type="button"
+                        disabled={isLoading}
+                        onClick={toggleEdit}
+                        className="px-8 py-2  rounded-lg mr-2 text-primary hover:bg-gray-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light"
+                      >
+                        {isLoading ? <Spinner /> : "Edit & Save"}
+                      </button>
+                    </div>
+                  )}
                 </Form>
               )}
             </Formik>
@@ -251,6 +319,23 @@ export default function OfferDetails() {
           setShow={setShowApproveModal}
         />
       )}
+
+      {successMessage && (
+        <SimpleNotification
+          type={"success"}
+          heading={"Success"}
+          message={successMessage}
+          setMessage={() => {}}
+        />
+      )}
+      {error && (
+        <SimpleNotification
+          type={"error"}
+          heading={"Error"}
+          message={error}
+          setMessage={() => {}}
+        />
+      )}
     </AppLayout>
   );
 }
@@ -261,6 +346,14 @@ function ApproveModal({ offerId, show, setShow }) {
   const handleApprove = (amount) => {
     approveOffer({ promotionId: offerId, amount: amount });
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      setTimeout(() => {
+        setShow(false);
+      }, 500);
+    }
+  }, [successMessage]);
 
   return (
     <ModalLayout isOpen={show} setIsOpen={setShow}>

@@ -4,9 +4,9 @@ import Spinner from "@/components/Loaders/Spinner";
 import ErrorAlert from "@/components/Alerts/ErrorAlert";
 import SuccessAlert from "@/components/Alerts/SuccessAlert";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { fetchAllCategories } from "@/features/categories/categoryApi";
 import { useCallback, useEffect } from "react";
 import usePartner from "@/features/partners/usePartner";
+import { fetchAllPartners } from "@/features/partners/partnerApi";
 export default function DeletePartnerModal({
   partnerId,
   show,
@@ -31,7 +31,7 @@ export default function DeletePartnerModal({
   useEffect(() => {
     if (successMessage) {
       setMessage(successMessage);
-      dispatch(fetchAllCategories());
+      dispatch(fetchAllPartners());
       closeModal();
     }
   }, [closeModal, dispatch, successMessage, setMessage]);

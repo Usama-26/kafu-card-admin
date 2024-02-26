@@ -18,11 +18,12 @@ import { fetchAllOffers } from "@/features/offers/offerApi";
 import dayjs from "dayjs";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
+import DeleteOfferModal from "@/components/Offer/Delete";
+import SimpleNotification from "@/components/Notifications/Simple";
 
 const headers = [
-  "Offer ID",
-  "Business Name",
-  "Business Category",
+  "Offer Title",
+  "Offer Category",
   "Duration",
   "Discount",
   "Expires on",
@@ -55,6 +56,9 @@ const tabs = [
 
 export default function ManageOffers() {
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
+  const [selectedId, setSelectedId] = useState("");
+  const [openDelete, setOpenDelete] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const dispatch = useDispatch();
   const offers = useSelector(getAllOffers);
   const offersError = useSelector(getOffersError);
@@ -66,7 +70,6 @@ export default function ManageOffers() {
       );
 
   useEffect(() => {
-    if (offers.length > 0) return;
     dispatch(fetchAllOffers());
   }, [offers, dispatch]);
 
@@ -115,9 +118,7 @@ export default function ManageOffers() {
                   <td className="whitespace-nowrap p-3 text-sm ">
                     {index + 1}
                   </td>
-                  <td className="whitespace-nowrap p-3 text-sm">
-                    {offer.id.slice(-4)}
-                  </td>
+
                   <td className="whitespace-nowrap p-3 text-sm">
                     {offer.title}
                   </td>
@@ -128,7 +129,7 @@ export default function ManageOffers() {
                     {offer.duration}
                   </td>
                   <td className="whitespace-nowrap p-3 text-sm">
-                    {offer.discount}
+                    {offer.discount} %
                   </td>
                   <td className="whitespace-nowrap p-3 text-sm">
                     {dayjs(offer.expiryDate).format("MM/DD/YYYY")}
@@ -178,6 +179,10 @@ export default function ManageOffers() {
                           <Menu.Item as={"li"} className="p-0 ">
                             <button
                               type="button"
+                              onClick={() => {
+                                setOpenDelete(true);
+                                setSelectedId(offer.id);
+                              }}
                               className="w-full flex gap-x-2 items-center px-4 py-1.5 text-red-700 hover:text-red-800 hover:bg-red-100 rounded"
                             >
                               <TrashIcon className="w-4 h-4" />
@@ -192,6 +197,24 @@ export default function ManageOffers() {
               ))
             : null}
         </SimpleTable>
+        {selectedId && (
+          <DeleteOfferModal
+            offerId={selectedId}
+            show={openDelete}
+            setShow={setOpenDelete}
+            setMessage={setSuccessMessage}
+          />
+        )}
+        {successMessage && (
+          <div className="mt-10">
+            <SimpleNotification
+              type={"success"}
+              heading={"Success"}
+              setMessage={setSuccessMessage}
+              message={successMessage}
+            />
+          </div>
+        )}
       </section>
     </AppLayout>
   );

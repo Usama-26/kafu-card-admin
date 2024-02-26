@@ -4,11 +4,14 @@ import {
   Bars3Icon,
   BellIcon,
   ChevronDownIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { classNames } from "@/utils/generics";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { getUser } from "@/features/auth/authSlice";
 export default function Header({ userNavigation, setSidebarOpen }) {
+  const user = useSelector(getUser);
+
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       <button

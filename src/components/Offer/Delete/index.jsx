@@ -5,20 +5,19 @@ import ErrorAlert from "@/components/Alerts/ErrorAlert";
 import SuccessAlert from "@/components/Alerts/SuccessAlert";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect } from "react";
-import useCustomer from "@/features/customers/useCustomer";
-import { fetchAllCustomers } from "@/features/customers/customerApi";
-export default function DeleteCustomerModal({
-  customerId,
+import useOffer from "@/features/offers/useOffer";
+import { fetchAllOffers } from "@/features/offers/offerApi";
+export default function DeleteOfferModal({
+  offerId,
   show,
   setShow,
   setMessage,
 }) {
   const dispatch = useDispatch();
-  const { removeCustomer, reset, successMessage, error, isLoading } =
-    useCustomer();
+  const { removeOffer, reset, successMessage, error, isLoading } = useOffer();
 
   const handleDelete = () => {
-    removeCustomer(customerId);
+    removeOffer(offerId);
   };
 
   const closeModal = useCallback(() => {
@@ -31,7 +30,7 @@ export default function DeleteCustomerModal({
   useEffect(() => {
     if (successMessage) {
       setMessage(successMessage);
-      dispatch(fetchAllCustomers());
+      dispatch(fetchAllOffers());
       closeModal();
     }
   }, [closeModal, dispatch, successMessage, setMessage]);
@@ -40,7 +39,7 @@ export default function DeleteCustomerModal({
     <ModalLayout isOpen={show} setIsOpen={closeModal}>
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto p-6">
         <div className="flex justify-between items-center border-b border-gray-300 pb-2 mb-4">
-          <h3 className="md:text-lg font-semibold">Delete Customer</h3>
+          <h3 className="md:text-lg font-semibold">Delete Offer</h3>
           <button type="button" onClick={closeModal}>
             <XMarkIcon className="w-6 h-6 stroke-2" />
           </button>
@@ -48,7 +47,7 @@ export default function DeleteCustomerModal({
         {error && <ErrorAlert>{error}</ErrorAlert>}
         {successMessage && <SuccessAlert>{successMessage}</SuccessAlert>}
         <h4 className="text-center">
-          Are you sure want to delete this customer ?
+          Are you sure want to delete this offer ?
         </h4>
         <div className=" flex justify-center  gap-x-4 mt-10 text-center md:text-base text-xs font-medium">
           <button

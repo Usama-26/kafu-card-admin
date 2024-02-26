@@ -1,33 +1,43 @@
+import Spinner from "@/components/Loaders/Spinner";
+import SimpleNotification from "@/components/Notifications/Simple";
 import Selectbox from "@/components/Selectbox";
 import ToggleButton from "@/components/Switch";
+import { getAllCategories } from "@/features/categories/categoriesSlice";
+import { fetchAllCategories } from "@/features/categories/categoryApi";
+import { fetchAllOffers } from "@/features/offers/offerApi";
 import useOffer from "@/features/offers/useOffer";
+import { fetchAllPartners } from "@/features/partners/partnerApi";
+import { getAllPartners } from "@/features/partners/partnersSlice";
 import AppLayout from "@/layouts/AppLayout";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-
-const categories = [
-  { value: "fashion", label: "Fashion" },
-  { value: "restaurant", label: "Restaurants" },
-  { value: "food", label: "Food" },
-];
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const durations = [
-  { value: "1-month", label: "1 Month" },
-  { value: "3-months", label: "3 Months" },
-  { value: "6-months", label: "6 Months" },
-  { value: "1-year", label: "1 Year" },
+  { value: "1 Month", label: "1 Month" },
+  { value: "3 Months", label: "3 Months" },
+  { value: "6 Months", label: "6 Months" },
+  { value: "1 Year", label: "1 Year" },
 ];
 
 export default function AddOffer() {
-  const [edit, setEdit] = useState(false);
-
-  const { getOffer, reset, isLoading, error, offer } = useOffer();
+  const { addOffer, reset, isLoading, successMessage, error } = useOffer();
+  const categories = useSelector(getAllCategories);
+  const partners = useSelector(getAllPartners);
+  const dispatch = useDispatch();
   const router = useRouter();
-  const offerId = router?.query?.offerId;
 
-  const toggleEdit = () => {
-    setEdit(!edit);
+  const categoriesList = categories?.map((category) => {
+    return { value: category.title, label: category.title };
+  });
+
+  const partnersList = partners?.map((partner) => {
+    return { value: partner.id, label: partner.bussinessName };
+  });
+
+  const handleAddOffer = (data) => {
+    addOffer(data);
   };
 
   useEffect(() => {
@@ -35,10 +45,17 @@ export default function AddOffer() {
   }, []);
 
   useEffect(() => {
-    if (offerId) {
-      getOffer(offerId);
+    dispatch(fetchAllCategories());
+    dispatch(fetchAllPartners());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (successMessage) {
+      setTimeout(() => {
+        router.replace(".");
+      }, 1000);
     }
-  }, [offerId]);
+  }, [dispatch, router, successMessage]);
 
   return (
     <AppLayout>
@@ -50,9 +67,9 @@ export default function AddOffer() {
           <div className="flex justify-between mb-4">
             <h1 className="text-lg font-semibold">Offer Details</h1>
           </div>
-
           <Formik
             initialValues={{
+              partner: { value: "", label: "" },
               title: "",
               discount: 0,
               categoryName: {
@@ -66,10 +83,34 @@ export default function AddOffer() {
               description: "",
               isFeatured: false,
             }}
+            onSubmit={(values) => {
+              const data = {
+                ...values,
+                partner: values.partner.value,
+                categoryName: values.categoryName.value,
+                duration: values.duration.value,
+              };
+              handleAddOffer(data);
+            }}
           >
-            {({ errors }) => (
+            {({}) => (
               <Form>
                 <div className="grid sm:grid-cols-2 grid-cols-1 gap-6">
+                  <div className="col-span-2">
+                    <label
+                      htmlFor="partner"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Partner
+                    </label>
+                    <Field
+                      name="partner"
+                      id="partner"
+                      as={SelectInput}
+                      items={partnersList}
+                      className="text-field"
+                    />
+                  </div>
                   <div>
                     <label
                       htmlFor="title"
@@ -86,16 +127,16 @@ export default function AddOffer() {
                   </div>
                   <div>
                     <label
-                      htmlFor="category"
+                      htmlFor="categoryName"
                       className="block mb-2 text-sm font-medium"
                     >
                       Offer Category
                     </label>
                     <Field
-                      name="category"
-                      id="category"
+                      name="categoryName"
+                      id="categoryName"
                       as={SelectInput}
-                      items={categories}
+                      items={categoriesList}
                     />
                   </div>
                   <div>
@@ -112,7 +153,7 @@ export default function AddOffer() {
                       className="number-field"
                     />
                   </div>
-                  <div>
+                  {/* <div>
                     <label
                       htmlFor="validity"
                       className="block mb-2 text-sm font-medium"
@@ -125,7 +166,7 @@ export default function AddOffer() {
                       type="text"
                       className="text-field"
                     />
-                  </div>
+                  </div> */}
                   {/* <div>
                       <label
                         htmlFor="location"
@@ -183,33 +224,44 @@ export default function AddOffer() {
                         as={FeaturedToggle}
                       />
                     </div>
-                    {edit && (
-                      <div className="mt-auto ml-auto text-end md:text-base text-sm font-semibold">
-                        <button
-                          type="button"
-                          onClick={toggleEdit}
-                          className="px-8 py-2  rounded-lg mr-2 text-primary hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
-                        <button className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light">
-                          Save
-                        </button>
-                      </div>
-                    )}
                   </div>
+                </div>
+                <div className="mt-auto ml-auto text-end md:text-base text-sm font-semibold">
+                  <button
+                    type="submit"
+                    className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light"
+                  >
+                    {isLoading ? <Spinner /> : "Add Offer"}
+                  </button>
                 </div>
               </Form>
             )}
           </Formik>
         </div>
+        {successMessage && (
+          <SimpleNotification
+            type={"success"}
+            heading={"Success"}
+            message={successMessage}
+            setMessage={() => {}}
+          />
+        )}
+        {error && (
+          <SimpleNotification
+            type={"error"}
+            heading={"Error"}
+            message={error}
+            setMessage={() => {}}
+          />
+        )}
       </section>
     </AppLayout>
   );
 }
 
 function SelectInput({ name, value, items, disabled, onChange }) {
-  const defaultIndex = items.findIndex((item) => item.value === value?.value);
+  const defaultIndex =
+    items.findIndex((item) => item.value === value?.value) || 0;
   return (
     <Selectbox
       defaultIndex={defaultIndex}
