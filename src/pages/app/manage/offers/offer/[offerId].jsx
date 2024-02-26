@@ -15,14 +15,13 @@ import { PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 const durations = [
   { value: "1 Month", label: "1 Month" },
   { value: "3 Months", label: "3 Months" },
   { value: "6 Months", label: "6 Months" },
-  { value: "1 Year", label: "1 Year" },
+  { value: "12 Months", label: "12 Months" },
 ];
 
 export default function OfferDetails() {
@@ -77,7 +76,7 @@ export default function OfferDetails() {
     }
   }, [offerId]);
 
-  console.log(error);
+  console.log();
 
   return (
     <AppLayout>
@@ -111,7 +110,7 @@ export default function OfferDetails() {
               className="flex gap-x-2 items-center text-sm text-primary hover:text-primary-light"
             >
               <PencilSquareIcon className="w-5 h-5" />
-              <span> Edit</span>
+              <span>Edit</span>
             </button>
           </div>
 
@@ -124,14 +123,6 @@ export default function OfferDetails() {
                 },
                 title: offer.title || "",
                 discount: offer?.discount || 0,
-                categoryName: {
-                  value: offer?.categoryName || "",
-                  label: offer?.categoryName || "",
-                },
-                duration: {
-                  value: offer?.duration || "",
-                  label: offer?.duration || "",
-                },
                 description: offer?.description || "",
                 isFeatured: offer?.isFeatured || false,
               }}
@@ -139,8 +130,6 @@ export default function OfferDetails() {
                 const data = {
                   ...values,
                   partner: values.partner.value,
-                  categoryName: values.categoryName.value,
-                  duration: values.duration.value,
                 };
                 handleEditOffer(data);
               }}
@@ -205,7 +194,7 @@ export default function OfferDetails() {
                         name="discount"
                         id="discount"
                         type="number"
-                        disabled={!edit}
+                        disabled={true}
                         className="number-field"
                       />
                     </div>
@@ -250,7 +239,7 @@ export default function OfferDetails() {
                         name="duration"
                         id="duration"
                         as={SelectInput}
-                        disabled={!edit}
+                        disabled={true}
                         items={durations}
                       />
                     </div>

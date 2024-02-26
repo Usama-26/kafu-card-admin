@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import { getUser } from "@/features/auth/authSlice";
 export default function Header({ userNavigation, setSidebarOpen }) {
   const user = useSelector(getUser);
-
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       <button
@@ -102,6 +101,18 @@ export default function Header({ userNavigation, setSidebarOpen }) {
                     )}
                   </Menu.Item>
                 ))}
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={classNames(
+                        active ? "bg-gray-50" : "",
+                        "block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900"
+                      )}
+                    >
+                      Sign out
+                    </button>
+                  )}
+                </Menu.Item>
               </Menu.Items>
             </Transition>
           </Menu>

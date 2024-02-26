@@ -4,11 +4,11 @@ import Selectbox from "@/components/Selectbox";
 import ToggleButton from "@/components/Switch";
 import { getAllCategories } from "@/features/categories/categoriesSlice";
 import { fetchAllCategories } from "@/features/categories/categoryApi";
-import { fetchAllOffers } from "@/features/offers/offerApi";
 import useOffer from "@/features/offers/useOffer";
 import { fetchAllPartners } from "@/features/partners/partnerApi";
 import { getAllPartners } from "@/features/partners/partnersSlice";
 import AppLayout from "@/layouts/AppLayout";
+import { calculateExpiryDate } from "@/utils/generics";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -89,6 +89,7 @@ export default function AddOffer() {
                 partner: values.partner.value,
                 categoryName: values.categoryName.value,
                 duration: values.duration.value,
+                expiryDate: calculateExpiryDate(values.duration),
               };
               handleAddOffer(data);
             }}

@@ -96,18 +96,18 @@ export default function ManageOffers() {
         <div className="my-4 flex justify-between offers-center">
           <Tabs tabs={tabs} onSelect={setSelectedTab} />
           <div className="flex offers-center gap-x-3">
-            <button className="text-red-500">
+            {/* <button className="text-red-500">
               <TrashIcon className="w-6 h-6" />
-            </button>
+            </button> */}
             <Searchbar />
-            <button className="rounded px-2 py-1 border">
+            {/* <button className="rounded px-2 py-1 border">
               <span>Filters</span>
               <FunnelIcon className="w-6 h-6 inline-block" />
-            </button>
+            </button> */}
           </div>
         </div>
         <SimpleTable headers={headers}>
-          {filteredOffers.length > 0
+          {filteredOffers?.length > 0
             ? filteredOffers.map((offer, index) => (
                 <tr
                   key={offer.id}

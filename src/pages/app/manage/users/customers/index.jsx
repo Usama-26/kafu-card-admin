@@ -39,7 +39,7 @@ export default function ManageCustomers() {
 
   useEffect(() => {
     dispatch(fetchAllCustomers());
-  }, [customers, dispatch]);
+  }, [dispatch]);
 
   return (
     <AppLayout>
@@ -61,7 +61,7 @@ export default function ManageCustomers() {
           <div>
             <Searchbar />
           </div>
-          <div className="flex items-center gap-x-3">
+          {/* <div className="flex items-center gap-x-3">
             <button className="text-red-500">
               <TrashIcon className="w-6 h-6" />
             </button>
@@ -69,10 +69,10 @@ export default function ManageCustomers() {
               <span>Filters</span>
               <FunnelIcon className="w-6 h-6 inline-block" />
             </button>
-          </div>
+          </div> */}
         </div>
         <SimpleTable headers={headers}>
-          {customers.length > 0
+          {customers?.length > 0
             ? customers.map((customer, index) => (
                 <tr
                   key={customer.id}

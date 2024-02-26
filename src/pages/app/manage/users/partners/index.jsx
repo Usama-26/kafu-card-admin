@@ -55,7 +55,7 @@ export default function ManagePartners() {
           <div>
             <Searchbar />
           </div>
-          <div className="flex items-center gap-x-3">
+          {/* <div className="flex items-center gap-x-3">
             <button className="text-red-500">
               <TrashIcon className="w-6 h-6" />
             </button>
@@ -63,7 +63,7 @@ export default function ManagePartners() {
               <span>Filters</span>
               <FunnelIcon className="w-6 h-6 inline-block" />
             </button>
-          </div>
+          </div> */}
         </div>
         <SimpleTable headers={headers}>
           {partners.length > 0

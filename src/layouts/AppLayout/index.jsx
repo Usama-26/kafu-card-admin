@@ -53,10 +53,7 @@ let sidebarNavigation = [
   },
 ];
 
-const userNavigation = [
-  { name: "Your profile", href: "/app/profile" },
-  { name: "Sign out", href: "/" },
-];
+const userNavigation = [{ name: "Your profile", href: "/app/profile" }];
 
 export default function AppLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
