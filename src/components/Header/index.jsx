@@ -8,9 +8,18 @@ import {
 import { classNames } from "@/utils/generics";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { getUser } from "@/features/auth/authSlice";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { getUser, logout } from "@/features/auth/authSlice";
 export default function Header({ userNavigation, setSidebarOpen }) {
   const user = useSelector(getUser);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const handleSignOut = () => {
+    localStorage.removeItem("accessToken");
+    router.replace("/");
+    dispatch(logout());
+  };
   return (
     <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       <button
@@ -68,7 +77,7 @@ export default function Header({ userNavigation, setSidebarOpen }) {
                   className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                   aria-hidden="true"
                 >
-                  Tom Cook
+                  {user?.firstName} {user?.lastName}
                 </span>
                 <ChevronDownIcon
                   className="ml-2 h-5 w-5 text-gray-400"
@@ -104,6 +113,7 @@ export default function Header({ userNavigation, setSidebarOpen }) {
                 <Menu.Item>
                   {({ active }) => (
                     <button
+                      onClick={handleSignOut}
                       className={classNames(
                         active ? "bg-gray-50" : "",
                         "block w-full text-left px-3 py-1 text-sm leading-6 text-gray-900"

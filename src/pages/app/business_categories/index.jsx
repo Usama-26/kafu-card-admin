@@ -9,7 +9,10 @@ import {
 import Searchbar from "@/components/Searchbar";
 import SimpleTable from "@/components/Tables/Simple";
 import { useSelector } from "react-redux";
-import { getAllCategories } from "@/features/categories/categoriesSlice";
+import {
+  getAllCategories,
+  getCategoriesPagination,
+} from "@/features/categories/categoriesSlice";
 import { useDispatch } from "react-redux";
 import { fetchAllCategories } from "@/features/categories/categoryApi";
 import dayjs from "dayjs";
@@ -19,20 +22,23 @@ import SimpleNotification from "@/components/Notifications/Simple";
 import AddCategoryModal from "@/components/Category/Add";
 import EditCategoryModal from "@/components/Category/Edit";
 import DeleteCategoryModal from "@/components/Category/Delete";
+import Pagination from "@/components/Pagination";
 const headers = ["Image", "Category Name", "Date", ""];
 
 export default function BusinessCategories() {
   const [openAddCategory, setOpenAddCategory] = useState(false);
   const [openEditCategory, setOpenEditCategory] = useState(false);
   const [openDeleteCategory, setOpenDeleteCategory] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
   const [successMessage, setSuccessMessage] = useState("");
   const [selected, setSelected] = useState("");
   const categories = useSelector(getAllCategories);
+  const pagination = useSelector(getCategoriesPagination);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAllCategories());
-  }, [dispatch]);
+    dispatch(fetchAllCategories(pageNumber));
+  }, [dispatch, pageNumber]);
 
   return (
     <AppLayout>
@@ -137,7 +143,11 @@ export default function BusinessCategories() {
               ))
             : null}
         </SimpleTable>
-
+        <Pagination
+          currentPage={pagination.pageNo}
+          handleClick={setPageNumber}
+          totalPages={pagination.totalPages}
+        />
         <AddCategoryModal
           show={openAddCategory}
           setShow={setOpenAddCategory}

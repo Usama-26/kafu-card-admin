@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchAllPartners } from "./transactionApi";
+import { fetchAllTransactions } from "./transactionApi";
 
 const initialState = {
-  partners: [],
+  transactions: [],
   pageNo: 0,
   totalPages: 0,
   totalResults: 0,
@@ -10,38 +10,46 @@ const initialState = {
   error: "",
 };
 
-const partnersSlice = createSlice({
-  name: "partner",
+const transactionsSlice = createSlice({
+  name: "transaction",
   initialState: initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllPartners.pending, (state, action) => {
+      .addCase(fetchAllTransactions.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       })
-      .addCase(fetchAllPartners.fulfilled, (state, action) => {
-        state.partners = action.payload.results;
+      .addCase(fetchAllTransactions.fulfilled, (state, action) => {
+        state.transactions = action.payload.results;
         state.totalPages = action.payload.totalPages;
         state.totalResults = action.payload.totalResults;
-        state.pageNo = action.payload.pageNo;
+        state.pageNo = action.payload.page;
         state.isLoading = false;
       })
-      .addCase(fetchAllPartners.rejected, (state, action) => {
+      .addCase(fetchAllTransactions.rejected, (state, action) => {
         state.error = action.error.message;
         state.isLoading = false;
       });
   },
 });
 
-export default partnersSlice.reducer;
+export default transactionsSlice.reducer;
 
-export const getAllPartners = (state) => {
-  return state.partners.partners;
-};
-export const getPartnersLoading = (state) => {
-  return state.partners.isLoading;
+export const getAllTransactions = (state) => {
+  return state.transactions.transactions;
 };
 
-export const getPartnersError = (state) => {
-  return state.partners.error;
+export const getTransactionsPagination = (state) => {
+  return {
+    totalPages: state.transactions.totalPages,
+    totalResults: state.transactions.totalResults,
+    pageNo: state.transactions.pageNo,
+  };
+};
+export const getTransactionsLoading = (state) => {
+  return state.transactions.isLoading;
+};
+
+export const getTransactionsError = (state) => {
+  return state.transactions.error;
 };

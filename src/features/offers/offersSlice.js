@@ -23,7 +23,7 @@ const offersSlice = createSlice({
         state.offers = action.payload.results;
         state.totalPages = action.payload.totalPages;
         state.totalResults = action.payload.totalResults;
-        state.pageNo = action.payload.pageNo;
+        state.pageNo = action.payload.page;
         state.isLoading = false;
       })
       .addCase(fetchAllOffers.rejected, (state, action) => {
@@ -37,6 +37,13 @@ export default offersSlice.reducer;
 
 export const getAllOffers = (state) => {
   return state.offers.offers;
+};
+export const getOffersPagination = (state) => {
+  return {
+    totalPages: state.offers.totalPages,
+    totalResults: state.offers.totalResults,
+    pageNo: state.offers.pageNo,
+  };
 };
 export const getOffersLoading = (state) => {
   return state.offers.isLoading;

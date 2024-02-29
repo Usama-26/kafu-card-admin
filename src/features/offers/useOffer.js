@@ -48,7 +48,7 @@ export default function useOffer() {
     setError("");
     try {
       const res = await createOfferInvoice(data);
-      if (res.status === 200) {
+      if (res.status === 204) {
         setIsLoading(false);
         setSuccessMessage("Invoice Successfully Created.");
       }

@@ -36,12 +36,16 @@ export default function AddCustomer() {
               phoneNo: "",
               email: "",
               password: "",
+              nationality: "",
+              country: "",
             }}
             validationSchema={Yup.object({
-              firstName: Yup.string().required("First Name is required"),
               lastName: Yup.string().required("Last Name is required"),
               phoneNo: Yup.string().required("Phone No is required"),
               email: Yup.string().email().required("Email is required"),
+              firstName: Yup.string().required("First Name is required"),
+              country: Yup.string().required("Country is required"),
+              nationality: Yup.string().required("Nationality is required"),
               password: Yup.string().required("Password is required"),
             })}
             onSubmit={(values) => {
@@ -128,6 +132,46 @@ export default function AddCustomer() {
                     <ErrorMessage
                       component={"span"}
                       name="email"
+                      className="text-sm text-red-700"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nationality"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Nationality
+                    </label>
+                    <Field
+                      name="nationality"
+                      id="nationality"
+                      type="text"
+                      required
+                      className="text-field"
+                    />
+                    <ErrorMessage
+                      component={"span"}
+                      name="nationality"
+                      className="text-sm text-red-700"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="country"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Country
+                    </label>
+                    <Field
+                      name="country"
+                      id="country"
+                      type="text"
+                      required
+                      className="text-field"
+                    />
+                    <ErrorMessage
+                      component={"span"}
+                      name="country"
                       className="text-sm text-red-700"
                     />
                   </div>

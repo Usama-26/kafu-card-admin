@@ -2,7 +2,7 @@ import LoginForm from "@/components/LoginForm";
 import AuthLayout from "@/layouts/AuthLayout";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { login } from "@/features/auth/authApi";
+import { getCurrentUser, login } from "@/features/auth/authApi";
 import {
   getAuthError,
   getAuthLoading,
@@ -25,8 +25,9 @@ export default function Home() {
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       router.replace("/app");
+      dispatch(getCurrentUser());
     }
-  }, [user, router]);
+  }, [user, dispatch, router]);
 
   return (
     <AuthLayout>

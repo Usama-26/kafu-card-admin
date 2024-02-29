@@ -15,7 +15,7 @@ const partnersSlice = createSlice({
   initialState: initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllPartners.pending, (state, action) => {
+      .addCase(fetchAllPartners.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       })
@@ -23,7 +23,7 @@ const partnersSlice = createSlice({
         state.partners = action.payload.results;
         state.totalPages = action.payload.totalPages;
         state.totalResults = action.payload.totalResults;
-        state.pageNo = action.payload.pageNo;
+        state.pageNo = action.payload.page;
         state.isLoading = false;
       })
       .addCase(fetchAllPartners.rejected, (state, action) => {
@@ -37,6 +37,13 @@ export default partnersSlice.reducer;
 
 export const getAllPartners = (state) => {
   return state.partners.partners;
+};
+export const getPartnersPagination = (state) => {
+  return {
+    totalPages: state.partners.totalPages,
+    totalResults: state.partners.totalResults,
+    pageNo: state.partners.pageNo,
+  };
 };
 export const getPartnersLoading = (state) => {
   return state.partners.isLoading;

@@ -12,6 +12,10 @@ import MobileSidebar from "@/components/Mobile/Sidebar";
 import DesktopSidebar from "@/components/Desktop/Sidebar";
 import Header from "@/components/Header";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { getCurrentUser } from "@/features/auth/authApi";
+import { useSelector } from "react-redux";
+import { getUser } from "@/features/auth/authSlice";
 
 let sidebarNavigation = [
   {
@@ -53,12 +57,18 @@ let sidebarNavigation = [
   },
 ];
 
-const userNavigation = [{ name: "Your profile", href: "/app/profile" }];
+const userNavigation = [{ name: "Your profile", href: "/app/settings" }];
 
 export default function AppLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState(sidebarNavigation);
+  const user = useSelector(getUser);
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCurrentUser());
+  }, [dispatch]);
 
   useEffect(() => {
     const updatedNavigation = navigation.map((navItem) => {

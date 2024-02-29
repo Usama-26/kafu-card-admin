@@ -9,7 +9,10 @@ import {
 import Searchbar from "@/components/Searchbar";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import SimpleTable from "@/components/Tables/Simple";
-import { getAllPartners } from "@/features/partners/partnersSlice";
+import {
+  getAllPartners,
+  getPartnersPagination,
+} from "@/features/partners/partnersSlice";
 import { useDispatch } from "react-redux";
 import { fetchAllPartners } from "@/features/partners/partnerApi";
 import { Menu, Transition } from "@headlessui/react";
@@ -19,18 +22,21 @@ import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import SimpleNotification from "@/components/Notifications/Simple";
 import DeletePartnerModal from "@/components/Partner/Delete";
+import Pagination from "@/components/Pagination";
 
 const headers = ["Business Name", "Full Name", " Email", "Phone", "Date", ""];
 export default function ManagePartners() {
   const dispatch = useDispatch();
   const partners = useSelector(getAllPartners);
+  const pagination = useSelector(getPartnersPagination);
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const [openDelete, setOpenDelete] = useState(false);
+  const [pageNumber, setPageNumber] = useState(1);
 
   useEffect(() => {
-    dispatch(fetchAllPartners());
-  }, [partners, dispatch]);
+    dispatch(fetchAllPartners(pageNumber));
+  }, [dispatch, pageNumber]);
   return (
     <AppLayout>
       <section className="">
@@ -112,7 +118,7 @@ export default function ManagePartners() {
                       >
                         <Menu.Items
                           as="ul"
-                          className="p-1 px-2 m-0 w-28 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
+                          className="p-1 px-2 m-0 w-28 z-20 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
                         >
                           <Menu.Item as={"li"} className="p-0 ">
                             <Link
@@ -144,6 +150,11 @@ export default function ManagePartners() {
               ))
             : null}
         </SimpleTable>
+        <Pagination
+          currentPage={pagination.pageNo}
+          handleClick={setPageNumber}
+          totalPages={pagination.totalPages}
+        />
         {selectedId && (
           <DeletePartnerModal
             partnerId={selectedId}

@@ -5,15 +5,19 @@ import Dropzone from "react-dropzone";
 
 import { convertImageToBase64, uploadImage } from "@/utils/imageUpload";
 
-export default function FileDropzone({ images, setFiles, multiple = false }) {
+export default function FileDropzoneMultiple({
+  images,
+  setImages,
+  multiple = true,
+}) {
   const [localFiles, setLocalFiles] = useState([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const uploadBulkFiles = async (files) => {
     try {
       const promises = files.map(async (image) => {
         const result = await convertImageToBase64(image);
-        const cloudinaryResponse = await uploadImage(result, setUploadProgress);
+        const cloudinaryResponse = await uploadImage(result, () => {});
+        console.log(cloudinaryResponse);
         return cloudinaryResponse;
       });
       const responses = await Promise.all(promises);
@@ -26,7 +30,8 @@ export default function FileDropzone({ images, setFiles, multiple = false }) {
   const handleOnDrop = async (acceptedFiles) => {
     const cloudinaryResponses = await uploadBulkFiles(acceptedFiles);
     if (cloudinaryResponses) {
-      setFiles([...cloudinaryResponses]);
+      const imageUrls = cloudinaryResponses.map((res) => res.secure_url);
+      setImages([...images, ...imageUrls]);
     } else return;
     setLocalFiles([
       ...acceptedFiles.map((file) =>
@@ -40,48 +45,8 @@ export default function FileDropzone({ images, setFiles, multiple = false }) {
   const deleteImage = (index) => {
     const updatedImages = [...images];
     updatedImages.splice(index, 1);
-    setFiles(updatedImages);
+    setImages(updatedImages);
   };
-
-  // const thumbs = localFiles?.map((file, index) => (
-  //   <div
-  //     key={file.name}
-  //     className="group-hover:text-neutral-700 bg-neutral-200 m-2 rounded-md inline-flex items-center p-1  text-xs relative"
-  //   >
-  //     <div className="w-20 h-20 rounded-md relative">
-  //       <div
-  //         style={{
-  //           pointerEvents:
-  //             uploadProgress[file.name] !== undefined ? "none" : "auto",
-  //         }}
-  //       >
-  //         <Image
-  //           src={file.preview}
-  //           layout="fill"
-  //           className="rounded-md"
-  //           alt={file.name}
-  //         />
-  //       </div>
-  //       {uploadProgress[file.name] !== undefined && (
-  //         <div className="absolute inset-0 flex items-center justify-center">
-  //           <div className="w-full h-2 bg-primary rounded-full">
-  //             <div
-  //               className="h-full bg-secondary rounded-full"
-  //               style={{ width: `${uploadProgress[file.name]}%` }}
-  //             ></div>
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //     <button
-  //       onClick={() => deleteImage(index)}
-  //       className="absolute top-0 right-0 m-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-  //       disabled={uploadProgress[file.name] !== undefined}
-  //     >
-  //       <TrashIcon className="w-4 h-4" />
-  //     </button>
-  //   </div>
-  // ));
 
   const uploadedImages = images?.map((file, index) => (
     <div
@@ -101,7 +66,6 @@ export default function FileDropzone({ images, setFiles, multiple = false }) {
         type="button"
         onClick={() => deleteImage(index)}
         className="absolute top-0 right-0 m-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        disabled={uploadProgress[file.name] !== undefined}
       >
         <TrashIcon className="w-4 h-4" />
       </button>
@@ -132,11 +96,6 @@ export default function FileDropzone({ images, setFiles, multiple = false }) {
               Supported Files <b>jpeg, PNG</b>
             </p>
           </div>
-          <div
-            style={{ width: `${uploadProgress}%` }}
-            className="bg-gray-500 rounded-md h-2 transition-all"
-          ></div>
-          {uploadedImages}
         </>
       )}
     </Dropzone>

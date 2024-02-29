@@ -53,7 +53,7 @@ function Pagination({ currentPage, totalPages, handleClick }) {
           <li key={pageNumber}>
             <button
               className={`border rounded-md py-2 px-3 leading-tight text-sm  ${
-                pageNumber === currentPage ? "text-blue-800 " : "text-gray-800 "
+                pageNumber === currentPage ? "text-primary " : "text-gray-800 "
               }`}
               onClick={() => {
                 handleClick(pageNumber);

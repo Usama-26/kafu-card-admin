@@ -1,19 +1,20 @@
 import dynamic from "next/dynamic";
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export default function BarChart({ customersSeries, xaxis }) {
-  const series = [
-    {
-      name: "Net Profit",
-      data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-    },
-  ];
+export default function PartnerChart({ partnerSeries, xaxis }) {
+  // console.log(partnerSeries, xaxis);
+  // const series = [
+  //   {
+  //     name: "Net Profit",
+  //     data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+  //   },
+  // ];
 
   const options = {
-    toolbar: { show: false },
+    title: { text: "Partners Regisered", style: { fontWeight: "600" } },
+    toolbar: { show: true },
     chart: {
       type: "bar",
-      title: "Customers Registered",
       height: 250,
     },
     plotOptions: {
@@ -34,27 +35,20 @@ export default function BarChart({ customersSeries, xaxis }) {
     xaxis: {
       categories: xaxis.categories,
     },
-    yaxis: {
-      title: {
-        text: "$ (thousands)",
-      },
-    },
     fill: {
       opacity: 1,
     },
     colors: ["#249369"],
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return "$ " + val + " thousands";
-        },
-      },
-    },
   };
 
   return (
     <div id="chart">
-      <ApexChart options={options} series={series} type="bar" height={250} />
+      <ApexChart
+        options={options}
+        series={partnerSeries}
+        type="bar"
+        height={250}
+      />
     </div>
   );
 }

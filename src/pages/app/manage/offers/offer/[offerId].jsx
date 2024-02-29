@@ -1,5 +1,6 @@
 import ErrorAlert from "@/components/Alerts/ErrorAlert";
 import SuccessAlert from "@/components/Alerts/SuccessAlert";
+import FileDropzoneMultiple from "@/components/FileDropzoneMultiple";
 import Spinner from "@/components/Loaders/Spinner";
 import ModalLayout from "@/components/Modals/Layout";
 import SimpleNotification from "@/components/Notifications/Simple";
@@ -11,8 +12,13 @@ import useOffer from "@/features/offers/useOffer";
 import { fetchAllPartners } from "@/features/partners/partnerApi";
 import { getAllPartners } from "@/features/partners/partnersSlice";
 import AppLayout from "@/layouts/AppLayout";
-import { PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Field, Form, Formik } from "formik";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { Field, Form, Formik, useFormikContext } from "formik";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -53,8 +59,8 @@ export default function OfferDetails() {
   });
 
   const handleEditOffer = (data) => {
-    console.log(data);
     editOffer(offerId, data);
+    toggleEdit();
   };
 
   const toggleEdit = () => {
@@ -75,9 +81,6 @@ export default function OfferDetails() {
       getOffer(offerId);
     }
   }, [offerId]);
-
-  console.log();
-
   return (
     <AppLayout>
       <section>
@@ -125,11 +128,17 @@ export default function OfferDetails() {
                 discount: offer?.discount || 0,
                 description: offer?.description || "",
                 isFeatured: offer?.isFeatured || false,
+                images: offer?.images || [],
+                categoryName: {
+                  value: offer?.categoryName || "",
+                  label: offer?.categoryName || "",
+                },
               }}
               onSubmit={(values) => {
                 const data = {
                   ...values,
                   partner: values.partner.value,
+                  categoryName: values.categoryName.value,
                 };
                 handleEditOffer(data);
               }}
@@ -198,36 +207,6 @@ export default function OfferDetails() {
                         className="number-field"
                       />
                     </div>
-                    {/* <div>
-                      <label
-                        htmlFor="validity"
-                        className="block mb-2 text-sm font-medium"
-                      >
-                        Products offer validity
-                      </label>
-                      <Field
-                        name="validity"
-                        id="validity"
-                        type="text"
-                        disabled={!edit}
-                        className="text-field"
-                      />
-                    </div> */}
-                    {/* <div>
-                      <label
-                        htmlFor="location"
-                        className="block mb-2 text-sm font-medium"
-                      >
-                        Location
-                      </label>
-                      <Field
-                        name="location"
-                        id="location"
-                        type="text"
-                        disabled={!edit}
-                        className="text-field"
-                      />
-                    </div> */}
                     <div>
                       <label
                         htmlFor="duration"
@@ -243,7 +222,7 @@ export default function OfferDetails() {
                         items={durations}
                       />
                     </div>
-                    <div>
+                    <div className="col-span-2">
                       <label
                         htmlFor="description"
                         className="block mb-2 text-sm font-medium"
@@ -259,23 +238,8 @@ export default function OfferDetails() {
                         className="textarea-field"
                       />
                     </div>
-                    <div className="flex flex-col">
-                      <div className="flex justify-between">
-                        <label
-                          htmlFor="isFeatured"
-                          className="block mb-2 text-sm font-medium"
-                        >
-                          Featured Offer
-                        </label>
-                        <Field
-                          name="isFeatured"
-                          id="isFeatured"
-                          as={FeaturedToggle}
-                          disabled={!edit}
-                        />
-                      </div>
-                    </div>
                   </div>
+                  <OfferImages disabled={!edit} />
                   {edit && (
                     <div className="my-4 text-end md:text-base text-sm font-semibold">
                       <button
@@ -308,7 +272,6 @@ export default function OfferDetails() {
           setShow={setShowApproveModal}
         />
       )}
-
       {successMessage && (
         <SimpleNotification
           type={"success"}
@@ -417,12 +380,54 @@ function SelectInput({ name, value, items, disabled, onChange }) {
   );
 }
 
-function FeaturedToggle({ value, disabled, name, onChange }) {
+function OfferImages({ disabled }) {
+  const { values, setFieldValue } = useFormikContext();
+
+  const deleteImage = (index) => {
+    const updatedImages = [...values.images];
+    updatedImages.splice(index, 1);
+    setFieldValue("images", updatedImages);
+  };
+
+  const handleChangeImages = (images) => {
+    setFieldValue("images", images);
+  };
+
   return (
-    <ToggleButton
-      value={value}
-      disabled={disabled}
-      onToggle={(value) => onChange({ target: { name: name, value: value } })}
-    />
+    <div>
+      {values.images.length > 0 && (
+        <div className="mt-4">
+          <h1 className="text-lg font-semibold">Offer Images</h1>
+          <div className="flex flex-wrap gap-4">
+            {values.images.map((image, index) => (
+              <div key={index} className="group relative rounded-md">
+                <Image
+                  src={image}
+                  height={400}
+                  width={400}
+                  className="rounded-md w-20 h-32 object-cover"
+                  alt={`Image ${index}`}
+                />
+                {!disabled && (
+                  <button
+                    type="button"
+                    onClick={() => deleteImage(index)}
+                    className="group-hover:inline-block hidden absolute top-5 right-0 m-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          {!disabled && (
+            <FileDropzoneMultiple
+              images={values.images}
+              setImages={handleChangeImages}
+            />
+          )}
+        </div>
+      )}
+    </div>
   );
 }

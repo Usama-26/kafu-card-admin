@@ -11,9 +11,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const fetchAllCategories = createAsyncThunk(
   "category/fetchAll",
-  async () => {
+  async (pageNo = 1) => {
     try {
-      const response = await getData(`${BASE_URL}/categories`);
+      const response = await getData(`${BASE_URL}/categories?page=${pageNo}`);
 
       return response.data;
     } catch (error) {

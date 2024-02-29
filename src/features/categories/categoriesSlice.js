@@ -15,7 +15,7 @@ const categoriesSlice = createSlice({
   initialState: initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllCategories.pending, (state, action) => {
+      .addCase(fetchAllCategories.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       })
@@ -23,7 +23,7 @@ const categoriesSlice = createSlice({
         state.categories = action.payload.results;
         state.totalPages = action.payload.totalPages;
         state.totalResults = action.payload.totalResults;
-        state.pageNo = action.payload.pageNo;
+        state.pageNo = action.payload.page;
         state.isLoading = false;
       })
       .addCase(fetchAllCategories.rejected, (state, action) => {
@@ -37,6 +37,13 @@ export default categoriesSlice.reducer;
 
 export const getAllCategories = (state) => {
   return state.categories.categories;
+};
+export const getCategoriesPagination = (state) => {
+  return {
+    totalPages: state.categories.totalPages,
+    totalResults: state.categories.totalResults,
+    pageNo: state.categories.pageNo,
+  };
 };
 export const getCategoriesLoading = (state) => {
   return state.categories.isLoading;

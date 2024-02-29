@@ -8,17 +8,20 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import Searchbar from "@/components/Searchbar";
-import { FunnelIcon } from "@heroicons/react/24/outline";
 import SimpleTable from "@/components/Tables/Simple";
 import { useDispatch } from "react-redux";
 import { fetchAllCustomers } from "@/features/customers/customerApi";
 import { useSelector } from "react-redux";
-import { getAllCustomers } from "@/features/customers/customersSlice";
+import {
+  getAllCustomers,
+  getCustomersPagination,
+} from "@/features/customers/customersSlice";
 import dayjs from "dayjs";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import DeleteCustomerModal from "@/components/Customer/Delete";
 import SimpleNotification from "@/components/Notifications/Simple";
+import Pagination from "@/components/Pagination";
 
 const headers = [
   "First Name",
@@ -34,12 +37,14 @@ export default function ManageCustomers() {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
   const dispatch = useDispatch();
   const customers = useSelector(getAllCustomers);
+  const pagination = useSelector(getCustomersPagination);
 
   useEffect(() => {
-    dispatch(fetchAllCustomers());
-  }, [dispatch]);
+    dispatch(fetchAllCustomers(pageNumber));
+  }, [dispatch, pageNumber]);
 
   return (
     <AppLayout>
@@ -121,7 +126,7 @@ export default function ManageCustomers() {
                       >
                         <Menu.Items
                           as="ul"
-                          className="p-1 px-2 m-0 w-28 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
+                          className="p-1 px-2 m-0 w-28 z-20 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
                         >
                           <Menu.Item as={"li"} className="p-0 ">
                             <Link
@@ -153,6 +158,11 @@ export default function ManageCustomers() {
               ))
             : null}
         </SimpleTable>
+        <Pagination
+          currentPage={pagination.pageNo}
+          handleClick={setPageNumber}
+          totalPages={pagination.totalPages}
+        />
         {selectedId && (
           <DeleteCustomerModal
             customerId={selectedId}

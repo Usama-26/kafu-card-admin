@@ -9,17 +9,21 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import Searchbar from "@/components/Searchbar";
-import { FunnelIcon } from "@heroicons/react/24/outline";
+// import { FunnelIcon } from "@heroicons/react/24/outline";
 import SimpleTable from "@/components/Tables/Simple";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { getAllOffers, getOffersError } from "@/features/offers/offersSlice";
+import {
+  getAllOffers,
+  getOffersPagination,
+} from "@/features/offers/offersSlice";
 import { fetchAllOffers } from "@/features/offers/offerApi";
 import dayjs from "dayjs";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import DeleteOfferModal from "@/components/Offer/Delete";
 import SimpleNotification from "@/components/Notifications/Simple";
+import Pagination from "@/components/Pagination";
 
 const headers = [
   "Offer Title",
@@ -59,9 +63,10 @@ export default function ManageOffers() {
   const [selectedId, setSelectedId] = useState("");
   const [openDelete, setOpenDelete] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [pageNumber, setPageNumber] = useState(1);
   const dispatch = useDispatch();
   const offers = useSelector(getAllOffers);
-  const offersError = useSelector(getOffersError);
+  const pagination = useSelector(getOffersPagination);
 
   const filteredOffers = !selectedTab.value
     ? offers
@@ -70,8 +75,8 @@ export default function ManageOffers() {
       );
 
   useEffect(() => {
-    dispatch(fetchAllOffers());
-  }, [offers, dispatch]);
+    dispatch(fetchAllOffers(pageNumber));
+  }, [dispatch, pageNumber]);
 
   return (
     <AppLayout>
@@ -165,7 +170,7 @@ export default function ManageOffers() {
                       >
                         <Menu.Items
                           as="ul"
-                          className="p-1 px-2 m-0 w-28 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
+                          className="p-1 px-2 m-0 w-28 z-20 origin-top-right bg-white absolute right-5 text-xs rounded-md shadow-custom-md shadow-gray-300"
                         >
                           <Menu.Item as={"li"} className="p-0 ">
                             <Link
@@ -197,6 +202,11 @@ export default function ManageOffers() {
               ))
             : null}
         </SimpleTable>
+        <Pagination
+          currentPage={pagination.pageNo}
+          handleClick={setPageNumber}
+          totalPages={pagination.totalPages}
+        />
         {selectedId && (
           <DeleteOfferModal
             offerId={selectedId}

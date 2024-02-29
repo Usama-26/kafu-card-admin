@@ -9,9 +9,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export const fetchAllOffers = createAsyncThunk("offer/fetchAll", async () => {
+export const fetchAllOffers = createAsyncThunk("offer/fetchAll", async (pageNo = 1) => {
   try {
-    const response = await getData(`${BASE_URL}/promotions`);
+    const response = await getData(`${BASE_URL}/promotions?page=${pageNo}`);
     return response.data;
   } catch (error) {
     throw Error(

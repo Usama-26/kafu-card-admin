@@ -18,7 +18,7 @@ const durations = [
   { value: "1 Month", label: "1 Month" },
   { value: "3 Months", label: "3 Months" },
   { value: "6 Months", label: "6 Months" },
-  { value: "1 Year", label: "1 Year" },
+  { value: "12 Months", label: "12 Months" },
 ];
 
 export default function AddOffer() {
@@ -89,7 +89,7 @@ export default function AddOffer() {
                 partner: values.partner.value,
                 categoryName: values.categoryName.value,
                 duration: values.duration.value,
-                expiryDate: calculateExpiryDate(values.duration),
+                expiryDate: calculateExpiryDate(values.duration.label),
               };
               handleAddOffer(data);
             }}

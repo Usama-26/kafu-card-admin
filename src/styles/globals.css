@@ -20,10 +20,6 @@
   .number-field {
     @apply w-full px-4 py-1.5 rounded-md disabled:text-gray-500 disabled:bg-gray-100 text-gray-700 border-0 ring-1 ring-gray-300 outline-primary;
   }
-
-  .anime-text {
-    @apply bg-gray-500 hue-rotate-180;
-  }
 }
 
 @layer utilities {

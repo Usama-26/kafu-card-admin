@@ -17,7 +17,11 @@ const calculateExpiryDate = (selectedDuration) => {
   }
 };
 
+function isEmptyObject(obj) {
+  return Object.keys(obj).length === 0;
+}
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-export { classNames, calculateExpiryDate };
+export { classNames, calculateExpiryDate, isEmptyObject };

@@ -15,7 +15,7 @@ const customersSlice = createSlice({
   initialState: initialState,
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllCustomers.pending, (state, action) => {
+      .addCase(fetchAllCustomers.pending, (state) => {
         state.isLoading = true;
         state.error = "";
       })
@@ -23,7 +23,7 @@ const customersSlice = createSlice({
         state.customers = action.payload.results;
         state.totalPages = action.payload.totalPages;
         state.totalResults = action.payload.totalResults;
-        state.pageNo = action.payload.pageNo;
+        state.pageNo = action.payload.page;
         state.isLoading = false;
       })
       .addCase(fetchAllCustomers.rejected, (state, action) => {
@@ -37,6 +37,13 @@ export default customersSlice.reducer;
 
 export const getAllCustomers = (state) => {
   return state.customers.customers;
+};
+export const getCustomersPagination = (state) => {
+  return {
+    totalPages: state.customers.totalPages,
+    totalResults: state.customers.totalResults,
+    pageNo: state.customers.pageNo,
+  };
 };
 export const getCustomersLoading = (state) => {
   return state.customers.isLoading;
