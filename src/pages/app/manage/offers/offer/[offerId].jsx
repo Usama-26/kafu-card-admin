@@ -34,6 +34,7 @@ export default function OfferDetails() {
   const [edit, setEdit] = useState(false);
 
   const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
   const {
     getOffer,
     editOffer,
@@ -90,6 +91,7 @@ export default function OfferDetails() {
             <div className="text-end md:text-base text-sm font-semibold">
               <button
                 type="button"
+                onClick={() => setShowRejectModal(true)}
                 className="px-8 py-2 rounded-lg mr-2 border-primary border text-primary hover:bg-gray-100"
               >
                 Reject
@@ -132,6 +134,10 @@ export default function OfferDetails() {
                 categoryName: {
                   value: offer?.categoryName || "",
                   label: offer?.categoryName || "",
+                },
+                duration: {
+                  value: offer?.duration || "",
+                  label: offer?.duration || "",
                 },
               }}
               onSubmit={(values) => {
@@ -266,11 +272,18 @@ export default function OfferDetails() {
         </div>
       </section>
       {offer && offer.promotionStatus === "pending" && (
-        <ApproveModal
-          offerId={offerId}
-          show={showApproveModal}
-          setShow={setShowApproveModal}
-        />
+        <>
+          <ApproveModal
+            offerId={offerId}
+            show={showApproveModal}
+            setShow={setShowApproveModal}
+          />
+          <RejectionModal
+            offerId={offerId}
+            show={showRejectModal}
+            setShow={setShowRejectModal}
+          />
+        </>
       )}
       {successMessage && (
         <SimpleNotification
@@ -293,7 +306,8 @@ export default function OfferDetails() {
 }
 
 function ApproveModal({ offerId, show, setShow }) {
-  const { approveOffer, successMessage, isLoading, error } = useOffer();
+  const { approveOffer, getOffer, successMessage, isLoading, error } =
+    useOffer();
 
   const handleApprove = (amount) => {
     approveOffer({ promotionId: offerId, amount: amount });
@@ -302,6 +316,7 @@ function ApproveModal({ offerId, show, setShow }) {
   useEffect(() => {
     if (successMessage) {
       setTimeout(() => {
+        getOffer(offerId);
         setShow(false);
       }, 500);
     }
@@ -357,6 +372,83 @@ function ApproveModal({ offerId, show, setShow }) {
                 className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light"
               >
                 {isLoading ? <Spinner /> : "Approve"}
+              </button>
+            </div>
+          </Form>
+        </Formik>
+      </div>
+    </ModalLayout>
+  );
+}
+function RejectionModal({ offerId, show, setShow }) {
+  const { editOffer, getOffer, successMessage, isLoading, error } = useOffer();
+
+  const handleReject = (rejectionReason) => {
+    editOffer(offerId, {
+      rejectionReason: rejectionReason,
+      promotionStatus: "rejected",
+    });
+  };
+
+  useEffect(() => {
+    if (successMessage) {
+      setTimeout(() => {
+        getOffer(offerId);
+        setShow(false);
+      }, 500);
+    }
+  }, [successMessage]);
+
+  return (
+    <ModalLayout isOpen={show} setIsOpen={setShow}>
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-auto p-6">
+        <div className="flex justify-between items-center border-b border-gray-300 pb-2 mb-4">
+          <h3 className="md:text-lg font-semibold">Reject Offer</h3>
+          <button type="button" onClick={() => setShow(false)}>
+            <XMarkIcon className="w-6 h-6 stroke-2" />
+          </button>
+        </div>
+        {error && <ErrorAlert>{error}</ErrorAlert>}
+        {successMessage && <SuccessAlert>{successMessage}</SuccessAlert>}
+        <Formik
+          initialValues={{ rejectionReason: "" }}
+          onSubmit={(values) => {
+            const { rejectionReason } = values;
+            handleReject(rejectionReason);
+          }}
+        >
+          <Form>
+            <div className="my-5">
+              <div>
+                <label
+                  htmlFor="rejectionReason"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Reason for Rejection
+                </label>
+                <Field
+                  name="rejectionReason"
+                  id="rejectionReason"
+                  as="textarea"
+                  className="text-field"
+                />
+              </div>
+            </div>
+            <div className=" text-center md:text-base text-sm font-semibold">
+              <button
+                type="button"
+                onClick={() => setShow(false)}
+                disabled={isLoading}
+                className="px-8 py-2  rounded-lg mr-2 text-primary hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-8 py-2  rounded-lg text-white bg-primary hover:bg-primary-light"
+              >
+                {isLoading ? <Spinner /> : "Reject"}
               </button>
             </div>
           </Form>

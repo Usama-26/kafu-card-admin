@@ -68,7 +68,7 @@ export default function AppLayout({ children }) {
 
   useEffect(() => {
     dispatch(getCurrentUser());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const updatedNavigation = navigation.map((navItem) => {

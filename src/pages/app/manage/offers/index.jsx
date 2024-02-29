@@ -52,8 +52,8 @@ const tabs = [
     colorClass: "bg-green-100 text-green-600",
   },
   {
-    label: "Declined",
-    value: "declined",
+    label: "Rejected",
+    value: "rejected",
     colorClass: "bg-red-100 text-red-600",
   },
 ];

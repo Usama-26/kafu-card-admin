@@ -33,7 +33,9 @@ export default function AddPartner() {
               lastName: "",
               phoneNo: "",
               email: "",
-              businessName: "",
+              bussinessName: "",
+              nationality: "",
+              country: "",
               password: "",
             }}
             validationSchema={Yup.object({
@@ -41,6 +43,9 @@ export default function AddPartner() {
               lastName: Yup.string().required("Last Name is required"),
               phoneNo: Yup.string().required("Phone No is required"),
               email: Yup.string().email().required("Email is required"),
+              bussinessName: Yup.string().required("Business Name is required"),
+              nationality: Yup.string().required("Nationality is required"),
+              country: Yup.string().required("Country is required"),
               password: Yup.string().required("Password is required"),
             })}
             onSubmit={(values) => {
@@ -92,21 +97,21 @@ export default function AddPartner() {
                   </div>
                   <div>
                     <label
-                      htmlFor="businessName"
+                      htmlFor="bussinessName"
                       className="block mb-2 text-sm font-medium"
                     >
                       Business Name
                     </label>
                     <Field
-                      name="businessName"
-                      id="businessName"
+                      name="bussinessName"
+                      id="bussinessName"
                       type="text"
                       required
                       className="text-field"
                     />
                     <ErrorMessage
                       component={"span"}
-                      name="businessName"
+                      name="bussinessName"
                       className="text-sm text-red-700"
                     />
                   </div>
@@ -147,6 +152,46 @@ export default function AddPartner() {
                     <ErrorMessage
                       component={"span"}
                       name="email"
+                      className="text-sm text-red-700"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nationality"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Nationality
+                    </label>
+                    <Field
+                      name="nationality"
+                      id="nationality"
+                      type="text"
+                      required
+                      className="text-field"
+                    />
+                    <ErrorMessage
+                      component={"span"}
+                      name="nationality"
+                      className="text-sm text-red-700"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="country"
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Country
+                    </label>
+                    <Field
+                      name="country"
+                      id="country"
+                      type="text"
+                      required
+                      className="text-field"
+                    />
+                    <ErrorMessage
+                      component={"span"}
+                      name="country"
                       className="text-sm text-red-700"
                     />
                   </div>

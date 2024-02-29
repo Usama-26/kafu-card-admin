@@ -192,27 +192,6 @@ export default function EditPartner() {
                       </div>
                       <div>
                         <label
-                          htmlFor="country"
-                          className="block mb-2 text-sm font-medium"
-                        >
-                          Country
-                        </label>
-                        <Field
-                          name="country"
-                          id="country"
-                          type="text"
-                          required
-                          disabled={true}
-                          className="text-field"
-                        />
-                        <ErrorMessage
-                          component={"span"}
-                          name="country"
-                          className="text-sm text-red-700"
-                        />
-                      </div>
-                      <div>
-                        <label
                           htmlFor="nationality"
                           className="block mb-2 text-sm font-medium"
                         >
@@ -223,12 +202,33 @@ export default function EditPartner() {
                           id="nationality"
                           type="text"
                           required
-                          disabled={true}
+                          disabled={!edit}
                           className="text-field"
                         />
                         <ErrorMessage
                           component={"span"}
                           name="nationality"
+                          className="text-sm text-red-700"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="country"
+                          className="block mb-2 text-sm font-medium"
+                        >
+                          Country
+                        </label>
+                        <Field
+                          name="country"
+                          id="country"
+                          type="text"
+                          required
+                          disabled={!edit}
+                          className="text-field"
+                        />
+                        <ErrorMessage
+                          component={"span"}
+                          name="country"
                           className="text-sm text-red-700"
                         />
                       </div>
@@ -271,7 +271,7 @@ export default function EditPartner() {
                           id="tradeLicense"
                           type="text"
                           required
-                          disabled={true}
+                          disabled={!edit}
                           className="number-field"
                         />
                         <ErrorMessage
