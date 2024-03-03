@@ -53,14 +53,14 @@ export default function LoginForm({ error, loading, onLogin }) {
               >
                 Password
               </label>
-              <div className="text-sm">
+              {/* <div className="text-sm">
                 <a
                   href="#"
                   className="font-semibold text-primary hover:text-primary"
                 >
                   Forgot password?
                 </a>
-              </div>
+              </div> */}
             </div>
             <div className="mt-2">
               <Field
